@@ -1,5 +1,6 @@
-import { Locator, Page } from "@playwright/test";
-
+import { expect, Locator, Page } from "@playwright/test";
+import snackbarMessages from "../../../utils/snackbar-messages";
+import InputGlobalMessagesValidator from '../Global/inputs-validator-pages';
 
 class LoginPage {
     readonly page: Page;
@@ -9,8 +10,7 @@ class LoginPage {
     readonly emailValidationMessage: Locator;
     readonly passwordValidationMesssage: Locator;
 
-
-    constructor (page: Page) {
+    constructor(page: Page) {
         this.page = page;
         this.emailField = page.getByPlaceholder('nome@email.com');
         this.passwordField = page.getByPlaceholder('*****');
@@ -32,6 +32,21 @@ class LoginPage {
         await this.fillPasswordField(password);
         await this.enterButton.click();
     }
+
+    async checkInvalidCredentials() {
+        await this.emailValidationMessage.waitFor()
+        await this.passwordValidationMesssage.waitFor()
+        await expect(this.emailValidationMessage).toHaveText(snackbarMessages.emailField)
+        await expect(this.passwordValidationMesssage).toHaveText(snackbarMessages.passwordField)
+    }
+
+    async checkInputTextWithIncorrectEmail(invalidEmail: string) {
+        const globalInputValidation = new InputGlobalMessagesValidator(this.page)
+        await this.emailField.fill(invalidEmail);
+        await this.enterButton.click();
+        await expect(globalInputValidation.globalInvalidEmailValidation).toBeVisible();
+    }
+
 }
 
 

@@ -5,7 +5,7 @@ import userData from '../../../data/user-data';
 
 
 const email = userData;
-// const password = process.env.PASSWORD!;
+const password = process.env.PASSWORD!;
 let loginPage: LoginPage;
 
 test.beforeEach(async ({ page }) => {
@@ -14,12 +14,13 @@ test.beforeEach(async ({ page }) => {
 })
 
 test.describe('Authentication steps', () => {
-    
+
     test('[CT001] -  Deve validar se o é possível efetuar o login.', async () => {
-        await loginPage.doLogin(email.usuarios.email01, 'senhaqui')
+        await loginPage.doLogin(email.usuarios.email01, password);
     })
 
     test('[CT002] -  Deve validar se o email incorreto permite fazer login.', async () => {
-
+        const invalidEmail = email.usuarios.email02
+        await loginPage.checkInputTextWithIncorrectEmail(invalidEmail);
     })
 })
